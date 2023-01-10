@@ -1,0 +1,81 @@
+Problem Statement
+
+  Samantha interviews many candidates from different colleges using coding challenges and contests. 
+  Write a query to print the contest_id, hacker_id, name, and the sums of total_submissions, 
+  total_accepted_submissions, total_views, and total_unique_views for each contest sorted by 
+  contest_id. Exclude the contest from the result if all four sums are 0.
+      
+      Note: A specific contest can be used to screen candidates at more 
+            than one college, but each college only holds screening contest.
+
+
+The following tables hold interview data:
+
+Contests: 
+      contest_id  Integer
+      hacker_id   Integer
+      name        String
+
+Colleges: 
+      college_id  Integer
+      contest_id  Integer
+
+Challenges: 
+      challenge_id  Integer
+      college_id    Integer
+
+View_Stats: 
+      challenge_id        Integer
+      total_views         Integer
+      total_unique_views  Integer
+
+Submission_Stats: 
+      challenge_id                Integer
+      total_submissions           Integer
+      total_accepted_submission   Integer
+ 
+ 
+ 
+ /*  Solution   */
+ 
+ with cte_ss as (
+    select 
+        challenge_id, 
+        sum(total_submissions) total_submissions, 
+        sum(total_accepted_submissions) total_accepted_submissions
+    from submission_stats
+    group by challenge_id
+),
+cte_vs as (
+    select
+        challenge_id, 
+        sum(total_views) total_views, 
+        sum(total_unique_views) total_unique_views
+    from view_stats
+    group by challenge_id
+)
+select 
+    con.contest_id, 
+    con.hacker_id, 
+    con.name, 
+    sum(total_submissions) sts, 
+    sum(total_accepted_submissions) stas,
+    sum(total_views) stv, 
+    sum(total_unique_views) stuv
+ from colleges col
+    inner join contests con           on  col.contest_id = con.contest_id
+    inner join challenges chal        on col.college_id = chal.college_id
+    left join cte_ss ss               on chal.challenge_id = ss.challenge_id
+    left join cte_vs vs               on chal.challenge_id = vs.challenge_id
+group by con.contest_id, con.hacker_id, con.name
+having 
+  sum(total_submissions) != 0 
+  or sum(total_accepted_submissions) != 0 
+  or sum(total_views)  != 0 
+  or sum(total_unique_views) != 0
+order by con.contest_id
+
+ 
+ 
+
+ 
