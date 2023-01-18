@@ -1,4 +1,6 @@
 # My SQL Solutions 
 
-Medium to Hard problems from coding practice sites.
-Mainly Hacker Rank, StrataScratch, and LeetCode that I solved myself
+Some examples of Medium to Hard problems from coding practice sites like Hacker Rank, 
+StrataScratch, and LeetCode that I've solved.  Demonstrating some of the more advanced 
+coding features that I know.
+
