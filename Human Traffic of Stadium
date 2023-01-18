@@ -1,0 +1,43 @@
+/*  Hard Problem from LeetCode  */
+
+/** Problem Statement  
+
+Write an SQL query to display the records with three or more rows with consecutive id's, and the number 
+of people is greater than or equal to 100 for each.
+
+Return the result table ordered by visit_date in ascending order.
+
+Table: Stadium
+
++---------------+---------+
+| Column Name   | Type    |
++---------------+---------+
+| id            | int     |
+| visit_date    | date    |
+| people        | int     |
++---------------+---------+
+
+
+**************   Solution  ******************
+
+/* Write your T-SQL query statement below */
+with cte as(
+    select 
+        id, 
+        visit_date,
+        people,
+        id - row_number() over(order by id) as rn
+    from Stadium
+    where people >= 100
+), 
+cte2 as(
+  select rn, count(id) cnt
+  from cte
+  group by rn
+)
+select id,visit_date, people
+from cte
+where rn in (select rn 
+             from cte2 
+             where cnt > 2)
+order by visit_date asc;
